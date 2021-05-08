@@ -2,6 +2,7 @@ package module1
 
 
 import java.util.UUID
+import scala.Option
 import scala.annotation.tailrec
 
 
@@ -189,8 +190,6 @@ object hof{
       case Option.None => Option.None
     }
 
-    // праильно ли реализован flatmap ???
-
     def flatMap[B](f: A => Option[B]): Option[B] = this match {
       case Option.Some(v) => f(v)
       case Option.None => Option.None
@@ -217,15 +216,9 @@ object hof{
      * реализовать метод orElse который будет возвращать другой Option, если данный пустой
      */
 
-      // или
-    def getOrElse [B] (elseOption: Option[B]) : Option[_] = this match {
-      case Option.Some(v) => Option.Some(v)
-      case Option.None => elseOption
-    }
-
-      // или
     def getOrElse2 [B >: A] (elseOption: Option[B]) : Option[B] = this match {
       case Option.Some(v) => Option.Some(v)
+      case Option.Some(null) => elseOption
       case Option.None => elseOption
     }
 
@@ -254,14 +247,11 @@ object hof{
      * Реализовать метод zip, который будет создавать Option от пары значений из 2-х Option
      */
 
-    def zip [B] (otherOption: Option[B]): Option[(Option[A], Option [B])] = this match {
-      case Option.Some(v) => otherOption match {
-        case Option.Some(w) => Option.Some(Option.Some(v), Option.Some(w))
-        case Option.None => Option.Some(Option.Some(v), Option.None)
-      }
-      case Option.None => otherOption match {
-        case Option.Some(w) => Option.Some(Option.None, Option.Some(w))
-        case Option.None => Option.Some(Option.None, Option.None)
+    def zip [B] (otherOption: Option[B]) :Option[(A, B)] = this match {
+      case Option.None => Option.None
+      case Option.Some(x) => otherOption match {
+        case Option.None => Option.None
+        case Option.Some(y) => Option.Some(x, y)
       }
     }
 
